@@ -1,0 +1,10 @@
+#spring:
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: LM-READERS
+#          uri: http://LM-READERS/
+#          predicates:
+#            - Path=/readers/**
+
+       
