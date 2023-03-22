@@ -1,5 +1,6 @@
 package com.example.Readers.controllers;
 
+import java.net.http.HttpRequest;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,8 +46,8 @@ public class ReadersController {
 	}
 	
 	@GetMapping("/{id}")
-	public ReadersDto getReaderById(@PathVariable("id") Long id){
-		return readersService.getReaderById(id);
+	public ReadersDto getReaderById(@PathVariable("id") Long id, HttpServletRequest httpRequest){
+		return readersService.getReaderById(id,httpRequest);
 	}
 	
 	@PostMapping

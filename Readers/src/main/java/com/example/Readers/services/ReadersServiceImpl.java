@@ -1,5 +1,6 @@
 package com.example.Readers.services;
 
+import java.net.http.HttpRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -7,14 +8,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.Readers.config.JWTService;
 import com.example.Readers.config.kafka.KafkaPublisher;
 import com.example.Readers.dtos.Book;
 import com.example.Readers.dtos.ReadersDto;
@@ -32,6 +39,7 @@ public class ReadersServiceImpl implements ReadersService{
 	private final RestTemplate restTemplate;
 	private final ReadersRepository readersRepository;
 	private final KafkaService kafkaService;
+	private final JWTService jwtService;
 	
 	@Value("${LM-BOOKS-PUBLICASHERS.GETALL}")
 	private String bookApiUrl; 
@@ -72,13 +80,17 @@ public class ReadersServiceImpl implements ReadersService{
 	}
 
 	@Override
-	public ReadersDto getReaderById(Long id) {
+	public ReadersDto getReaderById(Long id, HttpServletRequest httpRequest) {
 		String url= bookApiUrl;
 		Readers readers = readersRepository.findById(id)
 				.orElseThrow(()-> new IllegalArgumentException("Given Reader id : "+id+"doesn't exist"));
 		ReadersDto readersDto=convertToDto(readersRepository.save(readers));
-	   ResponseEntity<Book[]> reponse= restTemplate.getForEntity(url, Book[].class,id);
-	   if(reponse.getStatusCode()==HttpStatus.OK) {
+		String token = httpRequest.getHeader("Authorization");
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authorization", token);
+		HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
+	   ResponseEntity<Book[]> reponse= restTemplate.exchange(url,HttpMethod.GET,entity, Book[].class,id);
+	   if(reponse.getStatusCode()==HttpStatus.OK) { 
 		   Book[] books=reponse.getBody();
 		   readersDto.setBooks(Arrays.asList(books));
 	   }
