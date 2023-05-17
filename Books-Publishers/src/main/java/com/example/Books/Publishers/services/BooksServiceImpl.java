@@ -1,9 +1,7 @@
 package com.example.Books.Publishers.services;
 
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.kafka.common.KafkaException;
@@ -107,6 +105,14 @@ public class BooksServiceImpl implements BooksService{
 		log.info("dueDateMethod called:{}",readersList.toString());
 		long[] result = readersList.stream().mapToLong(l -> l).toArray();
 		return result;
+	}
+
+	@Override
+	public BookResponseDto getBookByName(String bookName) {
+		Book book= booksRepository.findByTitle(bookName);
+		BookResponseDto bookDto= new BookResponseDto();
+		BeanUtils.copyProperties(book, bookDto);
+		return bookDto;
 	}
 
 }

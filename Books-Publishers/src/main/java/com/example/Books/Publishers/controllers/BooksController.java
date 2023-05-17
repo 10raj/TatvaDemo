@@ -4,6 +4,7 @@ package com.example.Books.Publishers.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,10 +37,13 @@ public class BooksController {
 	public BookResponseDto getBookById(@PathVariable("id") Long id){
 		return booksService.getBookById(id);
 	}
-	@PreAuthorize("hasAuthority('SCOPE_internal')")
 	@GetMapping("/reader/{id}")
 	public List<BookResponseDto> getBookByReaderId(@PathVariable("id") Long readerId){
 		return booksService.getBookByReaderId(readerId);
+	}
+	@GetMapping("/book_name/{bookName}")
+	public ResponseEntity<BookResponseDto> getBookByDueDate(@PathVariable("bookName") String bookName){
+		return ResponseEntity.ok(booksService.getBookByName(bookName));
 	}
 	@GetMapping("/readerdueList")
 	public long[] getBookByDueDate(){

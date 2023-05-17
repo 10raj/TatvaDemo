@@ -1,5 +1,6 @@
 package com.example.UserManagementService.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,11 +50,14 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public String userRegistration(UserRequestDto userRequestDto){
 		User user = new User();
+		List<Role> roles = new ArrayList<>();
 		Optional<User> userDb= userRepository.findByUserNameOrEmail(userRequestDto.getUserName(),userRequestDto.getEmail());
 		if(userDb.isPresent())
 			return "User Already Exist";
-		List<Role> roles = userRequestDto.getRoleCodes().stream().map((roleCode)->
-		roleRepository.findByRoleCode(roleCode)).collect(Collectors.toList());
+		if(userRequestDto.getRoleCodes()!=null) {
+			roles= userRequestDto.getRoleCodes().stream().map((roleCode)->
+			roleRepository.findByRoleCode(roleCode)).collect(Collectors.toList());
+		}
 		user.setRoles(roles);
 		BeanUtils.copyProperties(userRequestDto, user);
 		userRepository.save(user);

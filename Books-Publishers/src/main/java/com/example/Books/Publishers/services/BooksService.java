@@ -16,5 +16,6 @@ public interface BooksService {
 	void deleteBookById(Long id);
 	List<BookResponseDto> getBookByReaderId(Long readerId);
 	 long[] bookByDueDate();
+	BookResponseDto getBookByName(String bookName);
 	
 }

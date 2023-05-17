@@ -25,7 +25,15 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	private String name;
+	private String firstname;
+	private String middleName;
+	private String lastName;
+	private String address1;
+	private String address2;
+	private Long zip;
+	private String city;
+	private String State;
+	private String country;
 	@Column(unique=true)
 	private String userName;
 	private String password;
